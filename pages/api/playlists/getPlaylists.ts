@@ -1,9 +1,11 @@
+import { getToken } from "next-auth/jwt";
 const axios = require("axios");
-import { getAccessToken } from "../../../lib/spotify";
+const secret = process.env.SECRET;
 
 // gets the playlist Id, name, and cover for all playlists for the given user
 export default async (req, res) => {
-  const accessToken = await getAccessToken();
+  const token = await getToken({ req, secret });
+  const accessToken = token.accessToken;
   const { userId } = req.query;
   try {
     // get a list of user's playlists endpoint
@@ -22,7 +24,7 @@ export default async (req, res) => {
       images: item.images,
     }));
     console.log(playlists);
-    res.send("Successfully loaded all playlists");
+    res.send(playlists);
     return playlists;
   } catch (err) {
     console.log(err);

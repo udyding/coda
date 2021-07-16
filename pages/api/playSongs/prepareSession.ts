@@ -1,11 +1,13 @@
+import { getToken } from "next-auth/jwt";
 const axios = require("axios");
-import { getAccessToken } from "../../../lib/spotify";
+const secret = process.env.SECRET;
 
 export default async (req, res) => {
-  const accessToken = await getAccessToken();
+  const token = await getToken({ req, secret });
+  const accessToken = token.accessToken;
   const { playlistId } = req.query;
   // first ensure browser supports local storage
-  await loadPlaylistSongs(playlistId, accessToken);
+  // await loadPlaylistSongs(playlistId, accessToken);
   if ("localStorage" in window && window["localStorage"] !== null) {
     await loadPlaylistSongs(playlistId, accessToken);
   }

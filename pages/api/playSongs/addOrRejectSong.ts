@@ -1,5 +1,6 @@
+import { getToken } from "next-auth/jwt";
 const axios = require("axios");
-import { getAccessToken } from "../../../lib/spotify";
+const secret = process.env.SECRET;
 
 // skips to next song in queue
 async function skipSong(accessToken) {
@@ -19,7 +20,8 @@ async function skipSong(accessToken) {
 }
 
 export default async (req, res) => {
-  const accessToken = await getAccessToken();
+  const token = await getToken({ req, secret });
+  const accessToken = token.accessToken;
   const { action, songId, playlistId } = req.query;
   let test = {};
   if (action === true) {

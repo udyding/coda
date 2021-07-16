@@ -1,9 +1,11 @@
+import { getToken } from "next-auth/jwt";
 const axios = require("axios");
-import { getAccessToken } from "../../../lib/spotify";
+const secret = process.env.SECRET;
 let timer;
 
 export default async (req, res) => {
-  const accessToken = await getAccessToken();
+  const token = await getToken({ req, secret });
+  const accessToken = token.accessToken;
 
   async function getRandomIndex(playlistLength) {
     return Math.floor(Math.random() * playlistLength);

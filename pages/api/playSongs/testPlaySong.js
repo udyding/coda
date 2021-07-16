@@ -1,37 +1,6 @@
-import { getToken } from "next-auth/jwt";
 const axios = require("axios");
-const secret = process.env.SECRET;
 
-// gets the cover, title, album, and artist of the song
-export const getSongInfo = async (req, res) => {
-  const token = await getToken({ req, secret });
-  const accessToken = token.accessToken;
-  const { songId } = req.query;
-  try {
-    // get a track endpoint
-    const response = await axios({
-      method: "GET",
-      url: `https://api.spotify.com/v1/tracks/${songId}`,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    let data = response.data;
-    let artists = data.artists.map((item) => item.name);
-    let song = {
-      name: data.name,
-      artists: artists,
-      album: data.album.name,
-      image: data.album.images[0],
-    };
-    res.send("Successfully generated song details.");
-    console.log(song);
-    return true;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
+// testing the time of getting the start point of today's top hits (50 songs), no cache
 // takes in a song ID and returns the point in the song that will be played
 export const getStartPoint = async (songId, accessToken) => {
   try {
@@ -88,25 +57,49 @@ export const getStartPoint = async (songId, accessToken) => {
   }
 };
 
-// takes in a song Id and brings the current user to the designated start point
-export default async (req, res) => {
-  const token = await getToken({ req, secret });
-  const accessToken = token.accessToken;
-  const { songId } = req.query;
-  let startPoint = await getStartPoint(songId, accessToken);
-  startPoint = Math.floor(startPoint * 1000); // convert to milliseconds
+async function loadPlaylistSongs(playlistId, accessToken) {
   try {
-    // seek to position in currently playing track endpoint
-    await axios({
-      method: "PUT",
-      url: `https://api.spotify.com/v1/me/player/seek?position_ms=${startPoint}`,
+    let songIds = [];
+    const response = await axios({
+      method: "GET",
+      url: `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(id))`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    res.send(`Skipped to ${startPoint} of song.`);
-    return startPoint;
+    let data = response.data.items;
+    let dataLength = data.length;
+    // key is song ID, value is the location of song ('0' if already in playlist, '1' if rejected already)
+    let currSongId;
+    for (let i = 0; i < dataLength; i++) {
+      currSongId = data[i].track.id;
+      songIds[i] = currSongId;
+    }
+    return songIds;
   } catch (err) {
     console.log(err);
   }
+}
+
+// takes in a song Id and brings the current user to the designated start point
+// grab all 50 songs from today's top hits, iterate thru each song and add the time to an object, then return the object
+export default async (req, res) => {
+  const playlistId = "37i9dQZF1DXcBWIGoYBM5M";
+  const accessToken =
+    "BQBoZPgKg_uquCtEx4LJpTRj1RL4Z76Gg-_plQ-2LDiOaXHNtSaIHqK9JrwZ_CzT1s5VrTKZANMuK0_Gwu-Lt4PltRlhcS1HD18GUjmhktKwdzOAr62zeDcTde1I1XT_yMJF5NjXKFxtK1UFrJRjhQ5Dwu0UqJml3737VEgky0qB1XKtd2NpbFtDS-J0ggZCYhISh1ZKcGSPs7x7wuD2TLMLfXlz23VmZfpDJiwRgW5JMIxfYXc4dS_dA7y7OPhf-g";
+  const songIds = await loadPlaylistSongs(playlistId, accessToken);
+  let currSongId = "";
+  let startPoint;
+  let startPoints = [];
+
+  console.time("getting song start points");
+  // today's top hits always has 50 songs
+  for (let i = 0; i < 50; i++) {
+    currSongId = songIds[i];
+    startPoint = await getStartPoint(currSongId, accessToken);
+    startPoint = Math.floor(startPoint * 1000); // convert to milliseconds
+    startPoints[i] = startPoint;
+  }
+  console.timeEnd("getting song start points");
+  res.send(startPoints);
 };
