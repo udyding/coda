@@ -51,54 +51,51 @@ const List = ({ items }: Props) => {
         const songIds = songArr.map((song) => song.id);
         console.log(songIds)
         setRecommendedSongs(songIds);
+        addRecommendedSongs();
       })
   }
 
   const setRecommendedSongs = (recommendedSongArr) => {
-    const songIDArr = JSON.parse(localStorage.getItem('existingSongs'));
+    const songIDArr = [];
+    const existingSongs = JSON.parse(localStorage.getItem("existingSongs"));
     recommendedSongArr.forEach((song) => {
-      if (!songIDArr[song]) {
-        const key = song;
-        const obj = {};
-        obj[key] = true;
-        songIDArr.push(obj);
+      if (!existingSongs[song]) {
+        songIDArr.push(song);
       }
     });
-    localStorage.setItem("existingSongs", JSON.stringify(songIDArr));
+    localStorage.setItem("backlog", JSON.stringify(songIDArr));
   }
 
   const addRecommendedSongs = async () => {
-    const keys = Object.keys(localStorage);
-    const getRandomIndex = async (playlistLength) => {
-      return Math.floor(Math.random() * playlistLength);
-    }
 
-    const playlistLength = JSON.parse(localStorage.getItem("playlistLength"));
-    let backlog = JSON.parse(localStorage.getItem("backlog"));
-    let randomIndex = Math.floor(Math.random() * playlistLength); // gets random index
+    /* const keys = Object.keys(localStorage);
+     const getRandomIndex = async (playlistLength) => {
+       return Math.floor(Math.random() * playlistLength);
+     }*/
 
-    while (
-      keys[randomIndex] === "playlistLength" ||
-      keys[randomIndex] === "backlog"
-    ) {
-      randomIndex = await getRandomIndex(playlistLength);
-    }
-    const songIds = [];
+    const existingSongs = JSON.parse(localStorage.getItem("existingSongs"));
+    const backlog = JSON.parse(localStorage.getItem("backlog"));
+    const backlogLength = backlog.length
+    // let randomIndex = Math.floor(Math.random() * backlog.length); // gets random index
+
+    // randomIndex = await getRandomIndex(backlogLength);
+    console.log("hi")
     axios.get('api/playSongs/addToQueue', {
       params: {
-        songIds: songIds
+        songIds: localStorage.getItem("backlog")
       }
     })
       .then((response) => {
-        console.log(response);
-        if ("localStorage" in window && window?.localStorage !== null) {
-          setExistingSongs(response.data.items);
-        }
+        console.log('response', response);
       })
+      .catch((err) => {
+        console.log(err);
+      })
+    /*
     const amtQueueAddedSongs = songIds.length;
     backlog -= amtQueueAddedSongs - 15;
     localStorage.setItem("backlog", JSON.stringify(backlog));
-    return amtQueueAddedSongs;
+    return amtQueueAddedSongs;*/
   }
 
   return (
