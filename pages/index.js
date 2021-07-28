@@ -5,6 +5,7 @@ import { signIn, signOut, useSession } from "next-auth/client";
 const IndexPage = () => {
   const [session, loading] = useSession();
 
+  console.log(useSession());
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <h1>Hey Next.js 👋</h1>

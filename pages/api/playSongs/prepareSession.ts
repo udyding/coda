@@ -8,10 +8,11 @@ export default async (req, res) => {
   const { playlistId } = req.query;
   // first ensure browser supports local storage
   // await loadPlaylistSongs(playlistId, accessToken);
-  if ("localStorage" in window && window["localStorage"] !== null) {
+  /*if ("localStorage" in window && window?.localStorage !== null) {
     await loadPlaylistSongs(playlistId, accessToken);
-  }
-  res.send("Successfully loaded playlist songs to local storage.");
+  }*/
+  const data = await loadPlaylistSongs(playlistId, accessToken);
+  res.send(data);
 };
 
 async function loadPlaylistSongs(playlistId, accessToken) {
@@ -28,13 +29,13 @@ async function loadPlaylistSongs(playlistId, accessToken) {
     let dataLength = data.length;
     // key is song ID, value is the location of song ('0' if already in playlist, '1' if rejected already)
     let currSongId;
-    for (let i = 0; i < dataLength; i++) {
+    /* for (let i = 0; i < dataLength; i++) {
       currSongId = data[i].track.id;
       localStorage.setItem(currSongId, "0");
-    }
-    localStorage.setItem("playlistLength", `${dataLength}`); // keep track of amount of songs
-    localStorage.setItem("backlog", "0"); // if the recommendations don't return 15, compensate for this loss on next retrieval
-    return true;
+    } */
+    // localStorage.setItem("playlistLength", `${dataLength}`); // keep track of amount of songs
+    // localStorage.setItem("backlog", "0"); // if the recommendations don't return 15, compensate for this loss on next retrieval
+    return response.data;
   } catch (err) {
     console.log(err);
   }
