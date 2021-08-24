@@ -5,6 +5,19 @@
 // import { User } from 'path/to/interfaces';
 
 export type User = {
-  id: number
-  name: string
-}
+  id: number;
+  name: string;
+};
+
+export type PlaylistImage = {
+  height: number;
+  url: string;
+  width: number;
+};
+
+export type PlaylistItem = {
+  canAddTo: boolean;
+  id: string;
+  displayName: string;
+  images: PlaylistImage[];
+};

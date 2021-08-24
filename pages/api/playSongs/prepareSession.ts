@@ -14,7 +14,7 @@ export default async (req, res) => {
   res.send("Successfully loaded playlist songs to local storage.");
 };
 
-async function loadPlaylistSongs(playlistId, accessToken) {
+export const loadPlaylistSongs = async (playlistId, accessToken) => {
   try {
     // get a playlist's items
     const response = await axios({
@@ -38,4 +38,4 @@ async function loadPlaylistSongs(playlistId, accessToken) {
   } catch (err) {
     console.log(err);
   }
-}
+};

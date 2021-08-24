@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
+const qs = require("qs");
+const axios = require("axios");
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -88,6 +90,10 @@ export default NextAuth({
       }
 
       return refreshAccessToken(token);
+    },
+    async session(session, user) {
+      session.user = user;
+      return session;
     },
   },
   secret: process.env.SECRET,
