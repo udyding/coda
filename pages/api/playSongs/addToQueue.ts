@@ -10,8 +10,10 @@ export default async (req, res) => {
 
   const songIdArr = JSON.parse(songIds);
   let addQueuePromises = [];
+
   try {
     songIdArr.forEach((songId) => {
+      console.log(songId);
       const songUri = encodeURIComponent("spotify:track:" + songId);
       // add an item to the queue endpoint
       const promise = axios({
@@ -21,9 +23,12 @@ export default async (req, res) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      console.log('hi');
       addQueuePromises.push(promise);
       Promise.all(addQueuePromises).then(function (values) {
-        console.log(values);
+        //console.log(values);
+      }).catch((err) => {
+        console.log(err);
       });
     });
     res.send("Added new songs to the queue");
