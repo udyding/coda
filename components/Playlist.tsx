@@ -8,22 +8,22 @@ type Props = {
 }
 const List = ({ items }: Props) => {
   useEffect(() => {
-    const playlistId = "2PF13ZUdpgZgdCNtOZ3zCv";
+    const playlistId = "3n8Mq04SfjWllVhbvd2qOy";
     getPlaylist(playlistId);
   });
 
+  // Add existing songs in the playlist to local storage
   const setExistingSongs = (playlistSongArr) => {
     // key is song ID, value is the location of song ('0' if already in playlist, '1' if rejected already)
-    const songIDArr = [];
+    const songMap = new Map();
+
     playlistSongArr.forEach((song) => {
-      const key = song.track.id;
-      const obj = {};
-      obj[key] = false;
-      songIDArr.push(obj);
+      songMap.set(song.track.id, true);
     });
-    localStorage.setItem("existingSongs", JSON.stringify(songIDArr));
-    console.log(JSON.stringify(songIDArr));
+    localStorage.setItem("backlog", JSON.stringify(Array.from(songMap.entries())));
   }
+
+  // sets up playlist
   const getPlaylist = (playlistId) => {
     axios.get('api/playSongs/prepareSession', {
       params: {
@@ -37,8 +37,12 @@ const List = ({ items }: Props) => {
         }
         getRecommendedSongs('6iWMI5oOhWrDbLbjmwTWFq');
       })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
+  // calls findSongs API & runs returned songs through setRecommendedSongs
   const getRecommendedSongs = (songId) => {
     axios.get('api/playSongs/findSongs', {
       params: {
@@ -53,36 +57,47 @@ const List = ({ items }: Props) => {
         setRecommendedSongs(songIds);
         addRecommendedSongs();
       })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
+  // adds recommended songs to local storage
   const setRecommendedSongs = (recommendedSongArr) => {
     const songIDArr = [];
-    const existingSongs = JSON.parse(localStorage.getItem("existingSongs"));
+    const songMap = new Map(JSON.parse(localStorage.getItem("backlog")));
     recommendedSongArr.forEach((song) => {
-      if (!existingSongs[song]) {
-        songIDArr.push(song);
+      if (!songMap.get(song)) {
+        songMap.set(song, false);
       }
     });
-    localStorage.setItem("backlog", JSON.stringify(songIDArr));
+    localStorage.setItem("backlog", JSON.stringify(Array.from(songMap.entries())));
   }
 
+  // adds recommended songs to players queue
   const addRecommendedSongs = async () => {
+    const backlog = new Map(JSON.parse(localStorage.getItem("backlog")));
+    let count = 0;
 
-    /* const keys = Object.keys(localStorage);
-     const getRandomIndex = async (playlistLength) => {
-       return Math.floor(Math.random() * playlistLength);
-     }*/
+    const songArr = [];
+    var mapSongArr = Array.from(backlog.keys());
 
-    const existingSongs = JSON.parse(localStorage.getItem("existingSongs"));
-    const backlog = JSON.parse(localStorage.getItem("backlog"));
-    const backlogLength = backlog.length
-    // let randomIndex = Math.floor(Math.random() * backlog.length); // gets random index
+    while (count < 15) {
+      var len = mapSongArr.length;
+      var rand = Math.floor(Math.random()*len);
+      if (mapSongArr[rand]) {
+        var key = mapSongArr[rand];
+      }
+  
+      if (!backlog.get(key) && backlog.get(key) !== undefined) {
+        songArr.push(key);
+        count += 1;
+      }
+    }
 
-    // randomIndex = await getRandomIndex(backlogLength);
-    console.log("hi")
     axios.get('api/playSongs/addToQueue', {
       params: {
-        songIds: localStorage.getItem("backlog")
+        songIds: JSON.stringify(songArr)
       }
     })
       .then((response) => {
@@ -91,11 +106,6 @@ const List = ({ items }: Props) => {
       .catch((err) => {
         console.log(err);
       })
-    /*
-    const amtQueueAddedSongs = songIds.length;
-    backlog -= amtQueueAddedSongs - 15;
-    localStorage.setItem("backlog", JSON.stringify(backlog));
-    return amtQueueAddedSongs;*/
   }
 
   return (

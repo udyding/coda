@@ -23,7 +23,6 @@ export default async (req, res) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log('hi');
       addQueuePromises.push(promise);
       Promise.all(addQueuePromises).then(function (values) {
         //console.log(values);
