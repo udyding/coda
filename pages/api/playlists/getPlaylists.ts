@@ -23,7 +23,6 @@ export default async (req, res) => {
       displayName: item.name,
       images: item.images,
     }));
-    console.log(playlists);
     res.send(playlists);
     return playlists;
   } catch (err) {

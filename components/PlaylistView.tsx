@@ -1,15 +1,29 @@
 import * as React from "react";
+import Link from "next/link";
+import { GetStaticProps, GetStaticPaths, GetServerSideProps } from "next";
 
-import { PlaylistItem } from "../interfaces";
+import { PlaylistInfo } from "../interfaces";
 
-type PlaylistViewProps = {
-  item: PlaylistItem;
+type Props = {
+  playlistItem: PlaylistInfo;
 };
 
-const PlaylistView = ({ item: playlist }: PlaylistViewProps) => (
+const PlaylistView = ({ playlistItem }: Props) => (
   <div>
-    <h1>{playlist.displayName}</h1>
-    <p>hello hello</p>
+    <h1>{playlistItem.displayName}</h1>
+    <ul>
+      {playlistItem.tracks.map((item) => (
+        <li>
+          <h3>{item.name}</h3>
+          {item.artists.map((artist) => (
+            <a>{artist}, </a>
+          ))}
+        </li>
+      ))}
+    </ul>
+    <Link href="/listening/[id]" as={`/listening/${playlistItem.id}`}>
+      <a>Start listening</a>
+    </Link>
   </div>
 );
 
