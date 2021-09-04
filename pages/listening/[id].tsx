@@ -4,9 +4,9 @@ const axios = require("axios");
 
 import { PlaylistInfo } from "../../interfaces";
 import Layout from "../../components/Layout";
-import PlaylistView from "../../components/PlaylistView";
+import Player from "../../components/Player";
 
-const Playlist = () => {
+const WebPlayer = () => {
   const router = useRouter();
   const { id } = router.query;
   const [playlistInfo, setPlaylistInfo] = useState<PlaylistInfo>();
@@ -31,9 +31,9 @@ const Playlist = () => {
 
   return (
     <Layout title={`${playlistInfo?.displayName || "Untitled"} | Coda`}>
-      {playlistInfo && <PlaylistView playlistItem={playlistInfo} />}
+      {playlistInfo && <Player playlistItem={playlistInfo} />}
     </Layout>
   );
 };
 
-export default Playlist;
+export default WebPlayer;

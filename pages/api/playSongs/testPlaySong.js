@@ -86,13 +86,14 @@ async function loadPlaylistSongs(playlistId, accessToken) {
 export default async (req, res) => {
   const playlistId = "37i9dQZF1DXcBWIGoYBM5M";
   const accessToken =
-    "BQBoZPgKg_uquCtEx4LJpTRj1RL4Z76Gg-_plQ-2LDiOaXHNtSaIHqK9JrwZ_CzT1s5VrTKZANMuK0_Gwu-Lt4PltRlhcS1HD18GUjmhktKwdzOAr62zeDcTde1I1XT_yMJF5NjXKFxtK1UFrJRjhQ5Dwu0UqJml3737VEgky0qB1XKtd2NpbFtDS-J0ggZCYhISh1ZKcGSPs7x7wuD2TLMLfXlz23VmZfpDJiwRgW5JMIxfYXc4dS_dA7y7OPhf-g";
+    "BQBMIUNW33OM-OcNQ3f4DSU5zaVZmne5r9zjR1nG7clsTe4ioSKWFq5g5irEEZp8A-kLUvlM9h2O_A2UFH96rW6BbbLdIcdDlgqZgIfGWKiQmcCqmfS3tomkLs8Dqja_jUqWnz_SJwB8PVQoNNRMaoAaN3FUa7MnCpb5UQ";
   const songIds = await loadPlaylistSongs(playlistId, accessToken);
   let currSongId = "";
   let startPoint;
   let startPoints = [];
 
   console.time("getting song start points");
+  console.log("song", songIds);
   // today's top hits always has 50 songs
   for (let i = 0; i < 50; i++) {
     currSongId = songIds[i];

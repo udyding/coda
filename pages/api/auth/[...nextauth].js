@@ -54,7 +54,7 @@ export default NextAuth({
   providers: [
     Providers.Spotify({
       scope:
-        "user-read-private user-read-email playlist-read-private playlist-read-collaborative user-modify-playback-state playlist-modify-public playlist-modify-private",
+        "user-read-private user-read-email playlist-read-private playlist-read-collaborative user-modify-playback-state playlist-modify-public playlist-modify-private streaming",
       clientId: process.env.SPOTIFY_CLIENT_ID,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
       // accessTokenUrl: "https://accounts.spotify.com/api/token",

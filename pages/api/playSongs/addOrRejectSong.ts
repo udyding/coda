@@ -35,10 +35,11 @@ export default async (req, res) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      /*
       const playlistLength = JSON.parse(localStorage.getItem("playlistLength"));
       test[songId] = "0";
       // localStorage.setItem(songId, "0"); // added into playlist
-      test["playlistLength"] = JSON.stringify(playlistLength + 1);
+      test["playlistLength"] = JSON.stringify(playlistLength + 1);*/
       // localStorage.setItem(
       //   "playlistLength",
       //   JSON.stringify(playlistLength + 1)
@@ -49,7 +50,7 @@ export default async (req, res) => {
     }
   } else {
     // add song to list of songs that are rejected
-    localStorage.setItem(songId, "1");
+    // localStorage.setItem(songId, "1");
     test[songId] = "1";
   }
   await skipSong(accessToken);

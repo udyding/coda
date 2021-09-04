@@ -21,3 +21,16 @@ export type PlaylistItem = {
   displayName: string;
   images: PlaylistImage[];
 };
+
+export type Track = {
+  name: string;
+  artists: string[];
+};
+
+export type PlaylistInfo = {
+  id: string;
+  displayName: string;
+  owner: string;
+  images: PlaylistImage[];
+  tracks: Track[];
+};
